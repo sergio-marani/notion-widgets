@@ -14,14 +14,14 @@
   --muted:color-mix(in srgb,CanvasText 62%, transparent);
   --line:color-mix(in srgb,CanvasText 16%, transparent);
   --subtle:color-mix(in srgb,CanvasText 6%, transparent);
-  --ginkgo-1:#6d7752;
-  --ginkgo-2:#b79d3a;
-  --ginkgo-3:#f1dc72;
-  --ginkgo-4:#c98b45;
-  --maple-1:#9d744d;
-  --maple-2:#d78b54;
-  --maple-3:#d95a43;
-  --maple-4:#9e3c37;
+  --ginkgo-1:#688125;
+  --ginkgo-2:#a9b22e;
+  --ginkgo-3:#d9b91d;
+  --ginkgo-4:#c9863b;
+  --maple-1:#688125;
+  --maple-2:#d7a054;
+  --maple-3:#e0462a;
+  --maple-4:#a1302b;
   --fallen:#756a62;
 }
 *,*:before,*:after{box-sizing:border-box}
@@ -29,16 +29,19 @@ html,body{margin:0;padding:0;background:transparent!important;min-width:240px}
 main{display:flex;flex-direction:column;gap:12px;margin:0 auto;padding:6px 4px 14px;max-width:560px}
 .city{border:1px solid var(--line);border-radius:14px;background:transparent;padding:14px 14px 12px;min-width:0}
 .head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
-.place{display:flex;align-items:baseline;gap:8px;min-width:0}
+.place{display:flex;align-items:center;gap:8px;min-width:0}
 .name{font-size:20px;font-weight:750;letter-spacing:-.035em;line-height:1.05}
 .kanji{font-size:13px;color:var(--muted)}
 .visit{font-size:12px;font-weight:700;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums;line-height:1.2;text-align:right}
 .nowrow{display:flex;align-items:center;gap:9px;margin:12px 0 10px;min-height:38px}
-.icon{font-size:26px;line-height:1;width:28px;text-align:center;flex:0 0 28px}
-.temp{font-size:36px;line-height:1;font-weight:730;letter-spacing:-.06em;font-variant-numeric:tabular-nums}
+.icon{font-size:32px;line-height:1;width:32px;text-align:center;flex:0 0 32px}
+.temp{font-size:42px;line-height:1;font-weight:730;letter-spacing:-.06em;font-variant-numeric:tabular-nums}
 .desc{font-size:12px;color:var(--muted);line-height:1.45;flex:1;min-width:0}
 .desc b{font-size:11px;display:block;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:CanvasText;margin-bottom:1px}
-.now-extra{font-size:12px;line-height:1.35;text-align:right;color:var(--muted);white-space:nowrap}
+.now-extra{display:flex;flex-direction:column;gap:3px;min-width:99px;flex-shrink:0;font-size:11px;line-height:1.3;color:var(--muted);white-space:nowrap}
+.now-extra .stat{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.now-extra .stat-label{text-align:left}
+.now-extra .stat-value{text-align:right;font-variant-numeric:tabular-nums}
 .history{display:grid;grid-template-columns:1fr auto;gap:5px 10px;align-items:center;padding:10px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .history-title{font-size:13px;font-weight:700;line-height:1.35}
 .history-title small{font-size:11px;color:var(--muted);font-weight:500;display:block}
@@ -55,18 +58,17 @@ main{display:flex;flex-direction:column;gap:12px;margin:0 auto;padding:6px 4px 1
 .kind-dot.ginkgo{background:var(--ginkgo-3)}
 .kind-dot.maple{background:var(--maple-3)}
 .barwrap{position:relative;height:12px;display:flex;align-items:center}
-.bar{position:relative;width:100%;height:10px;border-radius:999px;overflow:hidden;border:1px solid color-mix(in srgb,CanvasText 8%, transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,CanvasText 3%, transparent)}
+.bar{position:relative;width:100%;height:10px;border-radius:999px;overflow:visible;border:1px solid color-mix(in srgb,CanvasText 8%, transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,CanvasText 3%, transparent)}
 .bar.ginkgo{background:linear-gradient(90deg,var(--ginkgo-1) 0%,var(--ginkgo-2) 24%,var(--ginkgo-3) 52%,var(--ginkgo-4) 80%,var(--fallen) 100%)}
 .bar.maple{background:linear-gradient(90deg,var(--maple-1) 0%,var(--maple-2) 24%,var(--maple-3) 50%,var(--maple-4) 76%,var(--fallen) 100%)}
-.dot{position:absolute;top:50%;transform:translate(-50%,-50%);width:10px;height:10px;border-radius:50%;background:#fff;border:1px solid rgba(0,0,0,.18);box-shadow:0 0 0 1px rgba(0,0,0,.08), 0 1px 4px rgba(0,0,0,.26)}
+.dot{position:absolute;top:50%;transform:translate(-50%,-50%);width:10px;height:10px;border-radius:50%;background:#fff;border:1px solid rgba(0,0,0,.18);box-shadow:0 0 0 3px rgba(255,255,255,.17),0 0 10px rgba(255,255,255,.20);z-index:2}
 .fol-date{font-size:11px;color:var(--muted);text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
-.fol-meta{font-size:10px;color:var(--muted);margin-top:7px;line-height:1.35}
 .status-unknown{font-size:12px;color:var(--muted)}
 @media(max-width:340px){
   .city{padding:12px 11px 11px}
   .name{font-size:18px}
-  .temp{font-size:32px}
-  .visit,.desc,.now-extra,.history-title{font-size:11px}
+  .temp{font-size:42px}
+  .visit,.history-title{font-size:11px}
   .history-num{font-size:15px}
   .folrow{grid-template-columns:52px 1fr 40px;gap:6px}
   .kanji{display:none}
@@ -118,21 +120,20 @@ function barModel(type,c){
 function dotLeft(model,tripDate){
   const a=toNum(model.start), b=toNum(model.end), x=toNum(tripDate);
   const p=((x-a)/(b-a))*100;
-  return Math.max(0,Math.min(100,p));
+  return Math.max(1,Math.min(99,p));
 }
 function foliageSource(c){return c.sourceUrl||JMC}
 function foliageBar(type,c){
   const model=barModel(type,c);
   const left=dotLeft(model,dateMid(c));
-  const name=type==='ginkgo'?'Ginkgo':'Maple';
+  const name=type==='ginkgo'?'Ginkgo':'Acero';
   const cls=type;
   const peakLabel=labelDay(model.date);
   return `<div class="folrow"><span class="kind"><i class="kind-dot ${cls}"></i>${name}</span><div class="barwrap"><div class="bar ${cls}"><span class="dot" style="left:${left}%"></span></div></div><span class="fol-date">${peakLabel}</span></div>`;
 }
 function foliageHtml(c){
   const source=foliageSource(c);
-  const meta=c.sourceLabel?`${c.sourceLabel} · aggiornato ${labelDay(FOLIAGE_UPDATED)}`:`Aggiornato ${labelDay(FOLIAGE_UPDATED)}`;
-  return `<div class="fol-head"><span class="fol-title">Foliage previsto</span><a href="${source}" target="_blank" rel="noopener noreferrer">Fonte ↗</a></div>${foliageBar('ginkgo',c)}${foliageBar('maple',c)}<div class="fol-meta">● bianco = dove cadono le tue date di viaggio</div>`;
+  return `<div class="fol-head"><span class="fol-title">Foliage previsto</span><a href="${source}" target="_blank" rel="noopener noreferrer">Fonte ↗</a></div>${foliageBar('ginkgo',c)}${foliageBar('maple',c)}`;
 }
 function historicAverages(c,h){
   const dates=betweenDates(c.start,c.end).map(d=>'2025'+d.slice(4));
@@ -145,10 +146,10 @@ function cityHtml(c,i){
   const w=forecasts[i], h=history[i];
   const temp=w?.current?.temperature_2m, weather=w?.current?.weather_code;
   const hist=historicAverages(c,h);
-  const dateStr=c.start===c.end?labelDay(c.start):`${Number(c.start.slice(-2))}–${labelDay(c.end)}`;
+  const dateStr=c.start===c.end?labelDay(c.start):`${Number(c.start.slice(-2))} – ${labelDay(c.end)}`;
   const weatherDetail=demo?'DEMO · dati inventati':w?.current?`${wxText(weather)} · ${nowClock()} JST`:'Dati in caricamento / non disponibili';
   return `<article class="city" id="${c.id}"><div class="head"><span class="place"><span class="name">${c.name}</span><span class="kanji">${c.jp}</span></span><span class="visit">${dateStr}</span></div>
-  <div class="nowrow"><span class="icon" aria-hidden="true">${wxIcon(weather)}</span><span class="temp">${fmt(temp)}</span><span class="desc"><b>Meteo attuale</b>${weatherDetail}</span>${w?.current?`<span class="now-extra">Percepita ${fmt(w.current.apparent_temperature)}<br>Umidità ${w.current.relative_humidity_2m??'—'}%</span>`:''}</div>
+  <div class="nowrow"><span class="icon" aria-hidden="true">${wxIcon(weather)}</span><span class="temp">${fmt(temp)}</span><span class="desc"><b>Meteo attuale</b>${weatherDetail}</span>${w?.current?`<span class="now-extra"><span class="stat"><span class="stat-label">Percepita</span><span class="stat-value">${fmt(w.current.apparent_temperature)}</span></span><span class="stat"><span class="stat-label">Umidità</span><span class="stat-value">${w.current.relative_humidity_2m??'—'}%</span></span></span>`:''}</div>
   <div class="history"><div class="history-title">Storico 2025<small>medie nelle tue stesse date</small></div><div class="history-num">${hist.hi==null?'—':`<span class="high">↑ ${fmt(hist.hi)}</span> <span class="low">↓ ${fmt(hist.lo)}</span>`}</div></div>
   ${foliageHtml(c)}</article>`;
 }
