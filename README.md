@@ -4,16 +4,16 @@ A collection of lightweight, self-hosted widgets designed for Notion embeds and 
 
 ## Structure
 
-- `generic/` — reusable widgets for multiple Notion pages.
-- `custom/` — page-specific or project-specific widgets.
-- `custom/japan-weather-foliage/` — Japan trip weather and autumn foliage dashboard.
+- `generics/` — reusable widgets for multiple Notion pages.
+- `customs/` — page-specific or project-specific widgets.
+- `customs/japan-weather-foliage/` — Japan trip weather and autumn foliage dashboard.
 
 ## Embedding
 
 Once GitHub Pages is enabled from `main` / `(root)`, widgets can be embedded using their folder URL.
 
 **Japan weather and foliage:**
-`https://sergio-marani.github.io/notion-widgets/custom/japan-weather-foliage/`
+`https://sergio-marani.github.io/notion-widgets/customs/japan-weather-foliage/`
 
 The widget uses Open-Meteo for current and forecast weather and historical 2025 temperatures. Autumn foliage forecasts are dated snapshots from the linked forecast sources and are **not** automatically updated. It is a transparent, compact, six-card sidebar widget.
 
