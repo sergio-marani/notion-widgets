@@ -1,0 +1,163 @@
+{
+  "$schema": "./schema.json",
+  "schemaVersion": 1,
+  "updated": "2026-10-01",
+  "cities": {
+    "osaka": {
+      "countryCode": "JP",
+      "placeName": "Osaka",
+      "placeLocalName": "大阪",
+      "sourceUrl": "https://n-kishou.com/corp/news-contents/autumn/?lang=en",
+      "trees": [
+        {
+          "name": "Ginkgo",
+          "color": "yellow",
+          "start": "2026-11-13",
+          "peak": "2026-11-24",
+          "end": "2026-12-04"
+        },
+        {
+          "name": "Maple",
+          "color": "red",
+          "start": "2026-11-20",
+          "peak": "2026-12-04",
+          "end": "2026-12-13"
+        }
+      ]
+    },
+    "kyoto": {
+      "countryCode": "JP",
+      "placeName": "Kyoto",
+      "placeLocalName": "京都",
+      "sourceUrl": "https://n-kishou.com/corp/news-contents/autumn/?lang=en",
+      "trees": [
+        {
+          "name": "Ginkgo",
+          "color": "yellow",
+          "start": "2026-11-16",
+          "peak": "2026-11-27",
+          "end": "2026-12-08"
+        },
+        {
+          "name": "Maple",
+          "color": "red",
+          "start": "2026-11-22",
+          "peak": "2026-12-11",
+          "end": "2026-12-19"
+        }
+      ]
+    },
+
+    "takao": {
+      "countryCode": "JP",
+      "placeName": "Takao (Kyoto)",
+      "placeLocalName": "高雄",
+      "sourceUrl": "https://weathernews.jp/koyo/spot/26204/",
+      "trees": [
+        {
+          "name": "Maple",
+          "color": "red",
+          "start": "2026-11-08",
+          "peak": "2026-11-23",
+          "end": "2026-12-05"
+        }
+      ]
+    },
+    "takayama": {
+      "countryCode": "JP",
+      "placeName": "Takayama",
+      "placeLocalName": "高山",
+      "sourceUrl": "https://weathernews.jp/koyo/spot/25235/",
+      "trees": [
+        {
+          "name": "Ginkgo",
+          "color": "yellow",
+          "start": "2026-10-20",
+          "peak": "2026-10-30",
+          "end": "2026-11-10"
+        },
+        {
+          "name": "Maple",
+          "color": "red",
+          "start": "2026-10-24",
+          "peak": "2026-11-05",
+          "end": "2026-11-13"
+        }
+      ]
+    },
+    "hirayu": {
+      "countryCode": "JP",
+      "placeName": "Hirayu Onsen",
+      "placeLocalName": "平湯温泉",
+      "sourceUrl": "https://weathernews.jp/koyo/spot/25210/",
+      "trees": [
+        {
+          "name": "Maple",
+          "color": "red",
+          "start": "2026-10-10",
+          "peak": "2026-10-26",
+          "end": "2026-11-06"
+        }
+      ]
+    },
+    "kanazawa": {
+      "countryCode": "JP",
+      "placeName": "Kanazawa",
+      "placeLocalName": "金沢",
+      "sourceUrl": "https://n-kishou.com/corp/news-contents/autumn/?lang=en",
+      "trees": [
+        {
+          "name": "Ginkgo",
+          "color": "yellow",
+          "start": "2026-10-30",
+          "peak": "2026-11-10",
+          "end": "2026-11-23"
+        },
+        {
+          "name": "Maple",
+          "color": "red",
+          "start": "2026-11-16",
+          "peak": "2026-11-30",
+          "end": "2026-12-06"
+        }
+      ]
+    },
+    "nikko": {
+      "countryCode": "JP",
+      "placeName": "Nikko",
+      "placeLocalName": "日光",
+      "sourceUrl": "https://weathernews.jp/koyo/spot/24107/",
+      "trees": [
+        {
+          "name": "Maple",
+          "color": "red",
+          "start": "2026-10-26",
+          "peak": "2026-11-12",
+          "end": "2026-11-23"
+        }
+      ]
+    },
+    "tokyo": {
+      "countryCode": "JP",
+      "placeName": "Tokyo",
+      "placeLocalName": "東京",
+      "sourceUrl": "https://n-kishou.com/corp/news-contents/autumn/?lang=en",
+      "trees": [
+        {
+          "name": "Ginkgo",
+          "color": "yellow",
+          "start": "2026-11-15",
+          "peak": "2026-11-26",
+          "end": "2026-12-13"
+        },
+        {
+          "name": "Maple",
+          "color": "red",
+          "start": "2026-11-17",
+          "peak": "2026-11-28",
+          "end": "2026-12-15"
+        }
+      ]
+    }
+  }
+}
