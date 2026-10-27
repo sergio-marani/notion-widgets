@@ -66,6 +66,7 @@ main{display:flex;flex-direction:column;gap:12px;margin:0 auto;padding:6px 4px 1
 }
 .fol-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
 .fol-title{font-size:12px;font-weight:800;letter-spacing:.01em}
+.section-note{font-size:12px;color:var(--muted);line-height:1.45}
 .fol-head a{font-size:10px;color:var(--muted);text-decoration:none;text-underline-offset:2px}
 .fol-head a:hover{text-decoration:underline}
 .folrow{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:14px;min-width:0;min-height:23px}
@@ -88,7 +89,9 @@ main{display:flex;flex-direction:column;gap:12px;margin:0 auto;padding:6px 4px 1
 .snow-icon{color:#5c92bd;font-size:17px;vertical-align:-1px}
 .snow-frequency{font-size:20px;font-weight:750;font-variant-numeric:tabular-nums;white-space:nowrap;color:#5c92bd}
 .snow-frequency small{font-size:10px;font-weight:500;color:var(--muted)}
-.snow-summary{font-size:11px;color:var(--muted);margin:3px 0 7px}
+.snow-forecast{font-size:12px;line-height:1.4;margin-top:4px}
+.snow-basis{font-size:10px;line-height:1.35;color:var(--muted);margin-top:2px}
+.snow-history-head{display:flex;justify-content:space-between;flex-wrap:wrap;gap:3px 8px;font-size:11px;color:var(--muted);margin:8px 0 6px}
 .snow-years{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
 .snow-year{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:2px 5px;padding:5px 7px;background:var(--subtle);border-radius:6px;font-size:10px;font-variant-numeric:tabular-nums;color:var(--muted)}
 .snow-year b{font-size:11px;white-space:nowrap}

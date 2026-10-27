@@ -113,7 +113,7 @@ The dates above are existing dataset estimates, not forecasts newly researched d
 - Each foliage entry needs its own HTTPS `sourceUrl` and a non-empty `trees` array. There is no default source. Optional `notes` describe source context and uncertainty; they are not displayed.
 - Tree `name` is a free display label. `color` selects one of three fixed CSS gradients: `yellow`, `orange`, `red`. Adding Larice, Faggio or other trees requires only JSON edits.
 - Tree dates must be real ISO dates including the year, ordered `start <= peak <= end` and `start < end`.
-- A tree is visible when `visit.start <= tree.end` and `visit.end >= tree.start`. Trees are evaluated independently, in JSON order. Unsupported years, out-of-season visits and invalid trees do not create empty rows. If no trees qualify, hide the whole foliage section.
+- A tree bar is visible when `visit.start <= tree.end` and `visit.end >= tree.start`. Trees are evaluated independently, in JSON order. When foliage is enabled, keep the small `🍁 Foliage` section visible before and after the season, explaining that foliage has not started or has ended for the selected dates. Gaps between tree seasons, unsupported years and missing location data have separate messages; they never create empty bars.
 - The white marker shows the midpoint of the visit, clamped to the tree's start/end interval. The date on the right is the estimated peak.
 
 To add a location, first add its metadata and verified coordinates to the place catalog, then add seasonal estimates under the exact same ID in the foliage file. To revise forecasts, supply both schemas to the research model, request traceable sources and uncertainty notes, and distinguish sourced forecasts from inferred estimates. Omit unsupported trees instead of inventing dates. Data is not automatically refreshed.
@@ -122,7 +122,19 @@ To add a location, first add its metadata and verified coordinates to the place 
 
 Enable `snow=true` with valid dates; combine with `foliage=true` if desired. Snow works for catalog places, `city` searches outside the catalog and explicit `lat`/`lon`, and uses no static seasonal JSON.
 
-The section requests daily `snowfall_sum` in centimeters from the [Open-Meteo Archive API](https://open-meteo.com/en/docs/historical-weather-api) for the same interval one, two and three years before the trip. Cross-year visits retain both years; February 29 maps to February 28 when necessary.
+The section independently loads a current forecast and daily `snowfall_sum` in centimeters from the [Open-Meteo Archive API](https://open-meteo.com/en/docs/historical-weather-api) for the same interval three, two and one years before the trip. Year tiles run oldest to newest from left to right. Cross-year visits retain both years; February 29 maps to February 28 when necessary.
+
+### Current forecast and header percentage
+
+The [Forecast API](https://open-meteo.com/en/docs) is requested with up to 16 forecast days, then filtered to the exact travel interval. It must cover every requested day with valid snowfall data to be considered complete. A partial period is labelled with the number of covered days; it never becomes a complete dry forecast.
+
+- Complete forecast without any day reaching 0.1 cm: show “Non è ancora prevista neve per le tue date” and 0% in the header, taking precedence over historical snowfall.
+- Complete forecast with snow: show the total forecast cm. Request [ECMWF IFS ensemble snowfall](https://open-meteo.com/en/docs/ensemble-api) and estimate the chance of any snowy day as the fraction of complete ensemble members with at least one day reaching 0.1 cm. At least two complete members are required. This is an ensemble estimate for the whole interval, not precipitation probability (which also includes rain).
+- If forecast snow is positive but the ensemble is missing, incomplete or entirely disagrees, show the snowfall amount and `—` for the percentage rather than an invented value or a contradictory historical 0%.
+- Outside the available forecast horizon, show “Il meteo per le tue date non è disponibile” and retain historical frequency when available, explicitly labelled “Stima storica, non previsione”. With no historical samples, show `—`.
+- Partial forecasts show their actual coverage. Any positive snowfall within the covered days is shown as an “at least” amount, without assigning a whole-period percentage. A partial dry period never forces the percentage to 0%.
+
+The requested dry-forecast 0% is an indicator of the current forecast scenario, not a guarantee that snowfall is impossible. Forecast/ensemble data and the small historical sample are separate estimates, not pooled into one probability. Forecast data can update the header without waiting for history, and vice versa.
 
 A year is usable only with a complete, consecutive daily series of finite non-negative values in cm. Missing days, failed requests and incompatible units exclude the whole year. Periods ending today (UTC) or later are also excluded. Other available years remain usable; no older replacement years are requested.
 
@@ -130,9 +142,9 @@ A year is usable only with a complete, consecutive daily series of finite non-ne
 - Snowy year: at least one snowy day in that comparison period.
 - Historical frequency: snowy years / complete available years, rounded to a whole percent. Two snowy years out of three gives 67%. With only one year, the value is 0% or 100%.
 - Mean cm: average total snowfall over the whole comparison period, including zero-snow years. It is not snow depth on the ground.
-- Three year tiles show total cm or `n/d`. No complete samples produces an unavailable message rather than 0%.
+- Under “Negli anni precedenti:”, three year tiles show total cm or `n/d`, followed by historical snowy years/available years. No complete history produces an unavailable message; an available current forecast still works.
 
-One to three years are a small descriptive sample, not a calibrated forecast probability. Archive reanalysis and grid-cell elevation may differ from local mountain conditions. The compact snowflake/percentage/year tiles distinguish snow from foliage gradients.
+One to three historical years are a small descriptive sample, not a calibrated forecast probability. Archive reanalysis, forecast model resolution and grid-cell elevation may differ from local mountain conditions. The compact snowflake/current forecast/year tiles distinguish snow from foliage gradients.
 
 ## Files and preview
 
