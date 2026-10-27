@@ -102,11 +102,11 @@ export function cardHTML({place, city, dates, weather=null, history=null, histor
   const current=weather;
   const time=current?.time ? current.time.slice(11,16) : '';
   const condition=current?description(current.weather_code)+(time?' · '+time+' ora locale':''):(weatherError?'Meteo attuale non disponibile':'Caricamento meteo…');
-  const historical=dates?`<div class="history"><div class="history-title">Storico ${historyYear(dates)}<small>medie nelle tue stesse date</small></div><div class="history-num">${history?.high==null?'—':`<span class="high">↑ ${formatTemp(history.high)}</span>`}&nbsp; ${history?.low==null?'—':`<span class="low">↓ ${formatTemp(history.low)}</span>`}</div></div>`:''; 
+  const historical=dates?`<section class="widget-section history" aria-label="Temperature storiche"><div class="history-title">Storico ${historyYear(dates)}<small>medie nelle tue stesse date</small></div><div class="history-num">${history?.high==null?'—':`<span class="high">↑ ${formatTemp(history.high)}</span>`}&nbsp; ${history?.low==null?'—':`<span class="low">↓ ${formatTemp(history.low)}</span>`}</div>${historyError?'<div class="status-unknown">Storico non disponibile per questo intervallo.</div>':''}</section>`:'';
   const stats=current?`<span class="now-extra"><span class="stat"><span class="stat-label">Percepita</span><span class="stat-value">${formatTemp(current.apparent_temperature)}</span></span><span class="stat"><span class="stat-label">Umidità</span><span class="stat-value">${Number.isFinite(current.relative_humidity_2m)?Math.round(current.relative_humidity_2m)+'%':'—'}</span></span></span>`:'';
-  return `<article class="city"><div class="head"><span class="place"><span class="name">${name}</span><span class="place-local-name">${escapeHTML(placeLocalName)}</span></span><span class="visit">${escapeHTML(visit)}</span></div>
-    <div class="nowrow"><span class="icon" aria-hidden="true">${icon(current?.weather_code,current?.is_day!==0)}</span><span class="temp">${formatTemp(current?.temperature_2m)}</span><span class="desc"><b>Meteo attuale</b>${escapeHTML(condition)}</span>${stats}</div>
-    ${historical}${extra}${historyError?'<div class="status-unknown">Storico non disponibile per questo intervallo.</div>':''}
+  return `<article class="city"><section class="widget-section weather-section" aria-label="Meteo attuale"><div class="head"><span class="place"><span class="name">${name}</span><span class="place-local-name">${escapeHTML(placeLocalName)}</span></span><span class="visit">${escapeHTML(visit)}</span></div>
+    <div class="nowrow"><span class="icon" aria-hidden="true">${icon(current?.weather_code,current?.is_day!==0)}</span><span class="temp">${formatTemp(current?.temperature_2m)}</span><span class="desc"><b>Meteo attuale</b>${escapeHTML(condition)}</span>${stats}</div></section>
+    ${historical}${extra}
   </article>`;
 }
 

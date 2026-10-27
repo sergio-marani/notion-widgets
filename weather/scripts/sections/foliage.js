@@ -39,8 +39,8 @@ export function renderFoliage(data,{place,dates}){
   try{
     if(new URL(source).protocol==='https:')link=`<a href="${escapeHTML(source)}" target="_blank" rel="noopener noreferrer">Fonte ↗</a>`;
   }catch{}
-  return `<div class="fol-head"><span class="fol-title">Foliage previsto</span>${link}</div>`
-    +trees.map(tree=>row(tree,dates)).join('');
+  return `<section class="widget-section foliage-section" aria-label="Foliage previsto"><div class="fol-head"><span class="fol-title">Foliage previsto</span>${link}</div>`
+    +trees.map(tree=>row(tree,dates)).join('')+'</section>';
 }
 
 export function createFoliageExtension(){
@@ -53,7 +53,7 @@ export function createFoliageExtension(){
   return {
     extraReady,
     renderExtra:context=>failed && context.place
-      ?'<div class="status-unknown">Impossibile caricare i dati del foliage.</div>'
+      ?'<section class="widget-section foliage-section" aria-label="Foliage previsto"><div class="status-unknown">Impossibile caricare i dati del foliage.</div></section>'
       :renderFoliage(data,context),
     getPlaceLocalName:({place})=>findFoliage(data,place)?.placeLocalName||''
   };

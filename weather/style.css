@@ -11,12 +11,14 @@
 html,body{margin:0;padding:0;background:transparent!important;min-width:240px}
 main{display:flex;flex-direction:column;gap:12px;margin:0 auto;padding:6px 4px 14px;max-width:560px}
 .city{border:1px solid var(--line);border-radius:14px;background:transparent;padding:14px 14px 12px;min-width:0}
+.widget-section{min-width:0}
+.widget-section+.widget-section{margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
 .head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
 .place{display:flex;align-items:center;gap:8px;min-width:0}
 .name{font-size:20px;font-weight:750;letter-spacing:-.035em;line-height:1.05}
 .place-local-name{font-size:13px;color:var(--muted)}
 .visit{font-size:12px;font-weight:700;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums;line-height:1.2;text-align:right}
-.nowrow{display:flex;align-items:center;gap:14px;margin:12px 0 10px;min-height:38px}
+.nowrow{display:flex;align-items:center;gap:14px;margin:12px 0 0;min-height:38px}
 .icon{font-size:32px;line-height:1;width:32px;text-align:center;flex:0 0 32px}
 .temp{font-size:42px;line-height:1;font-weight:730;letter-spacing:-.06em;font-variant-numeric:tabular-nums}
 .desc{font-size:12px;color:var(--muted);flex:1;min-width:0;padding-top: 4px;}
@@ -25,8 +27,8 @@ main{display:flex;flex-direction:column;gap:12px;margin:0 auto;padding:6px 4px 1
 .now-extra .stat{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
 .now-extra .stat-label{text-align:left}
 .now-extra .stat-value{text-align:right;font-variant-numeric:tabular-nums}
-.history{display:grid;grid-template-columns:1fr auto;gap:5px 10px;align-items:center;padding:10px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-.history:last-child{border-bottom:0}
+.history{display:grid;grid-template-columns:1fr auto;gap:5px 10px;align-items:center}
+.history .status-unknown{grid-column:1/-1}
 .history-title{font-size:13px;font-weight:700;line-height:1.35}
 .history-title small{font-size:11px;color:var(--muted);font-weight:500;display:block}
 .history-num{font-size:16px;letter-spacing:-.03em;font-weight:750;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
@@ -35,9 +37,9 @@ main{display:flex;flex-direction:column;gap:12px;margin:0 auto;padding:6px 4px 1
 @media(max-width:340px){
   .city{padding:12px 11px 11px}
   .name{font-size:18px}
-  .nowrow{display:grid;grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"icon desc stats" "temp desc stats";gap:6px 10px}
-  .icon{grid-area:icon;justify-self:center}
-  .temp{grid-area:temp;font-size:42px;text-align:center}
+  .nowrow{display:grid;grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"icon desc stats" "temp desc stats";gap:6px 18px}
+  .icon{grid-area:icon}
+  .temp{grid-area:temp;font-size:32px;text-align:center}
   .desc{grid-area:desc}
   .now-extra{grid-area:stats}
   .visit,.history-title{font-size:11px}
@@ -62,11 +64,11 @@ main{display:flex;flex-direction:column;gap:12px;margin:0 auto;padding:6px 4px 1
   --fol-orange-4:#b25d2d;
   --fallen:#756a62;
 }
-.fol-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:10px;margin-bottom:8px}
+.fol-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
 .fol-title{font-size:12px;font-weight:800;letter-spacing:.01em}
 .fol-head a{font-size:10px;color:var(--muted);text-decoration:none;text-underline-offset:2px}
 .fol-head a:hover{text-decoration:underline}
-.folrow{display:grid;grid-template-columns:minmax(56px,auto) minmax(40px,1fr) 46px;align-items:center;gap:8px;min-width:0;min-height:23px}
+.folrow{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:14px;min-width:0;min-height:23px}
 .folrow+.folrow{margin-top:6px}
 .kind{font-size:12px;color:var(--muted);font-weight:700;display:inline-flex;align-items:center;gap:6px}
 .kind-label{overflow-wrap:anywhere;min-width:0}
@@ -81,8 +83,6 @@ main{display:flex;flex-direction:column;gap:12px;margin:0 auto;padding:6px 4px 1
 .bar.red{background:linear-gradient(90deg,var(--fol-red-1) 0%,var(--fol-red-2) 24%,var(--fol-red-3) 50%,var(--fol-red-4) 76%,var(--fallen) 100%)}
 .dot{position:absolute;top:50%;transform:translate(-50%,-50%);width:10px;height:10px;border-radius:50%;background:#fff;border:1px solid rgba(0,0,0,.18);box-shadow:0 0 10px rgba(255,255,255,.20);z-index:2}
 .fol-date{font-size:11px;color:var(--muted);text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
-.snow-section{margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
-.history+.snow-section{margin-top:0;border-top:0}
 .snow-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .snow-title{font-size:12px;font-weight:800}
 .snow-icon{color:#5c92bd;font-size:17px;vertical-align:-1px}

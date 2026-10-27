@@ -58,9 +58,9 @@ export async function loadSnowHistory(place,dates,today=new Date().toISOString()
 
 export function renderSnow(periods,{loading=false}={}){
   const summary=summarizeSnow(periods);
-  const heading='<span class="snow-title"><span class="snow-icon" aria-hidden="true">❄</span> Neve · storico</span>';
-  if(loading)return `<section class="snow-section" aria-label="Storico neve">${heading}<div class="snow-note" role="status">Caricamento delle stesse date nei 3 anni precedenti…</div></section>`;
-  if(!summary)return `<section class="snow-section" aria-label="Storico neve">${heading}<div class="snow-note">Dati neve non disponibili per queste date nei 3 anni precedenti.</div></section>`;
+  const heading='<span class="snow-title"><span class="snow-icon" aria-hidden="true">❄</span> Neve</span>';
+  if(loading)return `<section class="widget-section snow-section" aria-label="Storico neve">${heading}<div class="snow-note" role="status">Caricamento delle stesse date nei 3 anni precedenti…</div></section>`;
+  if(!summary)return `<section class="widget-section snow-section" aria-label="Storico neve">${heading}<div class="snow-note">Dati neve non disponibili per queste date nei 3 anni precedenti.</div></section>`;
   const years=periods.map(period=>{
     const available=Number.isFinite(period.totalCm);
     const amount=available?formatCm(period.totalCm)+' cm':'n/d';
@@ -68,7 +68,7 @@ export function renderSnow(periods,{loading=false}={}){
     const detail=available?`${period.snowDays} giorni con almeno 0,1 cm`:'Dati incompleti o non disponibili';
     return `<span class="${status}" title="${escapeHTML(period.start+' → '+period.end+' · '+detail)}"><span>${escapeHTML(yearLabel(period))}</span><b>${amount}</b></span>`;
   }).join('');
-  return `<section class="snow-section" aria-label="Storico neve"><div class="snow-head">${heading}<span class="snow-frequency" aria-label="Frequenza storica dei periodi con neve: ${summary.frequency}%">${summary.frequency}% <small>storico</small></span></div><div class="snow-summary">Neve in ${summary.snowyYears}/${summary.availableYears} anni · media ${formatCm(summary.meanCm)} cm</div><div class="snow-years">${years}</div><div class="snow-note">Stesse date · ≥0,1 cm/giorno · frequenza, non previsione</div></section>`;
+  return `<section class="widget-section snow-section" aria-label="Storico neve"><div class="snow-head">${heading}<span class="snow-frequency" aria-label="Frequenza storica dei periodi con neve: ${summary.frequency}%"><small>probabilitá </small>${summary.frequency}%</span></div><div class="snow-summary">Neve in ${summary.snowyYears}/${summary.availableYears} anni · media ${formatCm(summary.meanCm)} cm</div><div class="snow-years">${years}</div><div class="snow-note">Stesse date · ≥0,1 cm/giorno · frequenza, non previsione</div></section>`;
 }
 
 export function createSnowExtension(){

@@ -23,7 +23,7 @@ Current weather includes condition, temperature, feels-like temperature and humi
 
 Without dates, history is hidden. Invalid or reversed dates and intervals longer than 366 days show an error. Current weather, historical weather and section loading failures are handled independently. Foliage and snow loading do not block weather rendering.
 
-At viewport widths of 340 px or less, the weather icon sits above the temperature to leave more room for text. The bottom history divider is hidden when history is the card's final element.
+At viewport widths of 340 px or less, the weather icon sits above the temperature to leave more room for text. Dividers and spacing are applied only between adjacent visible sections (weather, history, foliage, snow), never after the final section. Section renderers use a `widget-section` wrapper; one shared CSS rule manages separators.
 
 ## Optional foliage
 
@@ -36,6 +36,8 @@ Each gradient bar represents that tree's explicit start-to-end interval. The whi
 ## Files
 
 Every widget must have `index.html` and `README.md`, use local `style.css` when styling is needed, and initialize in `scripts/widget.js`. Additional modules and data files are allowed.
+
+Keep shared logic in `scripts/`, optional sections in `scripts/sections/`, and each section's JSON data and schema in `data/<section>/`. Use `style.css` rather than `widget.css` or inline style blocks; dynamic per-element values such as the visit marker position may use inline style attributes.
 
 - `index.html`: the only entry page; loads `style.css` and `scripts/widget.js`.
 - `style.css`: all card styles, including foliage and compact layout.
@@ -119,11 +121,9 @@ Each sample must cover the entire shifted interval with consecutive dates, finit
 
 The card labels this **frequency, not a forecast**. One to three years form a small descriptive sample, not a calibrated probability of future snowfall. Archive data is model-based reanalysis at the selected location; local elevation and mountain conditions can differ. No arbitrary cm progress scale is used: a snowflake, historical percentage and compact year tiles distinguish this section from foliage gradients.
 
-## Preview and validation
+## Preview
 
 From the repository root, run `python -m http.server 8000` and open `/weather/?city=Kyoto&country=JP&date=2026-11-20&foliage=true` on that server. Deploy the entire `weather/` directory.
-
-Run `node --test tests/weather.test.mjs tests/snow.test.mjs` from the repository root. Tests cover dataset date ordering, settings, seasonal boundaries, independent trees, snow sample completeness, leap days, frequency calculations, fallback years, optional loading and section/weather resilience.
 
 ## Sources
 
