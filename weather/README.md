@@ -6,6 +6,7 @@ One single-city weather card with optional historical temperatures, foliage and 
 
 - `city` (required): city name, e.g. `Kyoto`, `Milano` or `Paris`.
 - `country` (optional): two-letter ISO country code; recommended to disambiguate names. Use `JP` for Japan.
+- `lat` and `lon` (optional, **both required together**): decimal coordinates for small places not found by the geocoder (latitude −90…90, longitude −180…180). When supplied, weather and snow use these coordinates directly and `city` becomes the display name; include `country=JP` to enable Japanese foliage matching. For example, `city=Hirayu%20Onsen&country=JP&lat=36.19061&lon=137.55175`.
 - `start` (optional): first travel date, `YYYY-MM-DD`.
 - `end` (optional): last travel date; defaults to `start`.
 - `date` (optional): shorthand for a single-day visit.
@@ -107,7 +108,7 @@ Example:
 
 https://sergio-marani.github.io/notion-widgets/weather/?city=Takayama&country=JP&start=2026-01-10&end=2026-01-12&snow=true
 
-Add `foliage=true` to combine both sections. Snow supports any city resolved by geocoding and does not depend on the foliage dataset.
+Add `foliage=true` to combine both sections. Snow supports any city resolved by geocoding, or specified with `lat`/`lon`, and does not depend on the foliage dataset.
 
 The section requests daily `snowfall_sum` in centimeters from the [Open-Meteo Archive API](https://open-meteo.com/en/docs/historical-weather-api) for the same calendar interval one, two and three years before the requested trip. For example, January 10–12, 2026 compares January 10–12 in 2025, 2024 and 2023. Cross-year visits retain both years; February 29 maps to February 28 where necessary.
 
