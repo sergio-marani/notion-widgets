@@ -29,6 +29,13 @@ const avg = xs => { const valid=xs.filter(Number.isFinite); return valid.length 
 export function readSettings(query = new URLSearchParams(location.search)) {
   const city = (query.get('city') || '').trim().slice(0,120);
   const country = (query.get('country') || '').trim().toUpperCase();
+  const latParam=query.get('lat'), lonParam=query.get('lon');
+  const hasCoordinates=latParam!==null||lonParam!==null;
+  const latitude=latParam!==null && latParam.trim()!==''?Number(latParam):NaN;
+  const longitude=lonParam!==null && lonParam.trim()!==''?Number(lonParam):NaN;
+  const coordinates=hasCoordinates && Number.isFinite(latitude) && latitude>=-90 && latitude<=90
+    && Number.isFinite(longitude) && longitude>=-180 && longitude<=180 ? {latitude,longitude}:null;
+  if(hasCoordinates && !coordinates)return {city,country,dates:null,coordinates:null,error:'Coordinate non valide. Specifica lat e lon numerici nell’URL.'};
   const single = query.get('date');
   let start = query.get('start') || query.get('from') || single || '';
   let end = query.get('end') || query.get('to') || single || start;
@@ -39,7 +46,7 @@ export function readSettings(query = new URLSearchParams(location.search)) {
   if (hasDates && (toDay(end) - toDay(start)) / 86400000 > 366) {
     return {city,country,dates:null,error:'L’intervallo non può superare un anno.'};
   }
-  return {city,country,dates:hasDates?{start,end,historicalStart:shiftYear(start,-1),historicalEnd:shiftYear(end,-1)}:null,error:null};
+  return {city,country,coordinates,dates:hasDates?{start,end,historicalStart:shiftYear(start,-1),historicalEnd:shiftYear(end,-1)}:null,error:null};
 }
 
 export async function requestJson(url, timeout=15000) {
@@ -116,7 +123,7 @@ export function cardHTML({place, city, dates, weather=null, history=null, histor
 export async function mountWeatherWidget({root=document.getElementById('cards'),renderExtra=()=>'',getPlaceLocalName=()=>'',extraReady=Promise.resolve(),loadExtra=async()=>{}}={}) {
   if(!root) throw new Error('Widget root not found');
   const settings=readSettings();
-  const {city,country,dates,error}=settings;
+  const {city,country,dates,error,coordinates}=settings;
   if(!city || city.length<2 || error){
     root.innerHTML=`<article class="city"><div class="head"><span class="place"><span class="name">Meteo</span></span></div><div class="status-unknown">${escapeHTML(error || 'Specifica una città nell’URL: ?city=Kyoto&start=2026-11-15&end=2026-11-19')}</div></article>`;
     return;
@@ -125,7 +132,10 @@ export async function mountWeatherWidget({root=document.getElementById('cards'),
   const update=()=>{root.innerHTML=cardHTML({place,city,dates,weather,history,historyError,weatherError,extra:renderExtra({place,dates,settings}),placeLocalName:getPlaceLocalName({place,dates,settings})})};
   update();
   try {
-    place=await findCity(city,country);
+    place=coordinates
+      ? {name:city,latitude:coordinates.latitude,longitude:coordinates.longitude,
+          country_code:country,country:country==='JP'?'Giappone':country}
+      : await findCity(city,country);
   } catch(err) {
     root.innerHTML=`<article class="city"><div class="head"><span class="place"><span class="name">${escapeHTML(city)}</span></span></div><div class="status-unknown">${escapeHTML(err.message)}</div></article>`;
     return;
