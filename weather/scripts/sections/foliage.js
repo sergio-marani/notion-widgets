@@ -1,6 +1,4 @@
-import {requestJson,escapeHTML,dayLabel,toDay} from '../weather-core.js';
-
-const placeKey=value=>String(value||'').normalize('NFKD').replace(/\p{M}/gu,'').toLowerCase().replace(/[^\p{L}\p{N}]/gu,'');
+import {requestJson,escapeHTML,dayLabel,toDay,loadPlaceCatalog,catalogIdForPlace} from '../weather-core.js';
 
 const validDate=value=>typeof value==='string' && /^\d{4}-\d{2}-\d{2}$/.test(value)
   && Number.isFinite(toDay(value).getTime()) && toDay(value).toISOString().slice(0,10)===value;
@@ -10,15 +8,9 @@ const overlaps=(period,dates)=>validPeriod(period) && dates.start<=period.end &&
 const colors=new Set(['yellow','orange','red']);
 const validTree=tree=>tree && typeof tree.name==='string' && tree.name.trim() && colors.has(tree.color);
 
-export function findFoliage(data,place){
-  if(!place || !/^[A-Z]{2}$/.test(place.country_code))return null;
-  const name=placeKey(place.name);
-  if(!name)return null;
-  return Object.values(data?.cities||{}).find(record=>
-    record?.countryCode===place.country_code && typeof record.placeName==='string'
-    && [record.placeName,record.placeLocalName,...(Array.isArray(record.aliases)?record.aliases:[])]
-      .some(alias=>placeKey(alias)===name)
-  )||null;
+export function findFoliage(data,place,catalog){
+  const id=catalogIdForPlace(catalog,place);
+  return id && Object.hasOwn(data?.places||{},id)?data.places[id]:null;
 }
 
 function row(tree,dates){
@@ -28,9 +20,9 @@ function row(tree,dates){
   return `<div class="folrow"><span class="kind"><i class="kind-dot ${tree.color}"></i><span class="kind-label">${escapeHTML(tree.name)}</span></span><div class="barwrap"><div class="bar ${tree.color}"><span class="dot" style="left:${position}%"></span></div></div><span class="fol-date">${dayLabel(tree.peak)}</span></div>`;
 }
 
-export function renderFoliage(data,{place,dates}){
+export function renderFoliage(data,{place,dates},catalog){
   if(!dates)return '';
-  const record=findFoliage(data,place);
+  const record=findFoliage(data,place,catalog);
   if(!record)return '';
   const trees=(Array.isArray(record.trees)?record.trees:[]).filter(tree=>validTree(tree) && overlaps(tree,dates));
   if(!trees.length)return '';
@@ -44,17 +36,18 @@ export function renderFoliage(data,{place,dates}){
 }
 
 export function createFoliageExtension(){
-  let data=null,failed=false;
-  const extraReady=requestJson(new URL('../../data/foliage/data.json',import.meta.url).toString())
-    .then(result=>{
-      if(result?.schemaVersion!==1 || !result.cities || typeof result.cities!=='object' || Array.isArray(result.cities))throw new Error('Invalid foliage dataset');
+  let data=null,catalog=null,failed=false;
+  const extraReady=Promise.all([requestJson(new URL('../../data/foliage/data.json',import.meta.url).toString()),loadPlaceCatalog()])
+    .then(([result,places])=>{
+      if(result?.schemaVersion!==2 || !result.places || typeof result.places!=='object' || Array.isArray(result.places))throw new Error('Invalid foliage dataset');
       data=result;
+      catalog=places;
     }).catch(error=>{failed=true;console.warn('Foliage data:',error.message)});
   return {
     extraReady,
     renderExtra:context=>failed && context.place
       ?'<section class="widget-section foliage-section" aria-label="Foliage previsto"><div class="status-unknown">Impossibile caricare i dati del foliage.</div></section>'
-      :renderFoliage(data,context),
-    getPlaceLocalName:({place})=>findFoliage(data,place)?.placeLocalName||''
+      :renderFoliage(data,context,catalog),
+    getPlaceLocalName:({place})=>catalog?.places[catalogIdForPlace(catalog,place)]?.placeLocalName||''
   };
 }

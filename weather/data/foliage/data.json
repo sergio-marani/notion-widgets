@@ -1,12 +1,9 @@
 {
   "$schema": "./schema.json",
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "updated": "2026-10-01",
-  "cities": {
+  "places": {
     "osaka": {
-      "countryCode": "JP",
-      "placeName": "Osaka",
-      "placeLocalName": "大阪",
       "sourceUrl": "https://n-kishou.com/corp/news-contents/autumn/?lang=en",
       "trees": [
         {
@@ -26,9 +23,6 @@
       ]
     },
     "kyoto": {
-      "countryCode": "JP",
-      "placeName": "Kyoto",
-      "placeLocalName": "京都",
       "sourceUrl": "https://n-kishou.com/corp/news-contents/autumn/?lang=en",
       "trees": [
         {
@@ -47,11 +41,7 @@
         }
       ]
     },
-
-    "takao": {
-      "countryCode": "JP",
-      "placeName": "Takao (Kyoto)",
-      "placeLocalName": "高雄",
+    "takao-kyoto": {
       "sourceUrl": "https://weathernews.jp/koyo/spot/26204/",
       "trees": [
         {
@@ -64,9 +54,6 @@
       ]
     },
     "takayama": {
-      "countryCode": "JP",
-      "placeName": "Takayama",
-      "placeLocalName": "高山",
       "sourceUrl": "https://weathernews.jp/koyo/spot/25235/",
       "trees": [
         {
@@ -85,10 +72,7 @@
         }
       ]
     },
-    "hirayu": {
-      "countryCode": "JP",
-      "placeName": "Hirayu Onsen",
-      "placeLocalName": "平湯温泉",
+    "hirayu-onsen": {
       "sourceUrl": "https://weathernews.jp/koyo/spot/25210/",
       "trees": [
         {
@@ -101,9 +85,6 @@
       ]
     },
     "kanazawa": {
-      "countryCode": "JP",
-      "placeName": "Kanazawa",
-      "placeLocalName": "金沢",
       "sourceUrl": "https://n-kishou.com/corp/news-contents/autumn/?lang=en",
       "trees": [
         {
@@ -123,9 +104,6 @@
       ]
     },
     "nikko": {
-      "countryCode": "JP",
-      "placeName": "Nikko",
-      "placeLocalName": "日光",
       "sourceUrl": "https://weathernews.jp/koyo/spot/24107/",
       "trees": [
         {
@@ -138,9 +116,6 @@
       ]
     },
     "tokyo": {
-      "countryCode": "JP",
-      "placeName": "Tokyo",
-      "placeLocalName": "東京",
       "sourceUrl": "https://n-kishou.com/corp/news-contents/autumn/?lang=en",
       "trees": [
         {

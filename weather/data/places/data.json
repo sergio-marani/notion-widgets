@@ -1,0 +1,77 @@
+{
+  "$schema": "./schema.json",
+  "schemaVersion": 1,
+  "places": {
+    "osaka": {
+      "countryCode": "JP",
+      "placeName": "Osaka",
+      "placeLocalName": "大阪",
+      "sourceUrl": "https://geocoding-api.open-meteo.com/v1/search?name=Osaka&countryCode=JP&count=10&language=it&format=json",
+      "latitude": 34.69379,
+      "longitude": 135.50107,
+      "geocodingId": 1853909
+    },
+    "kyoto": {
+      "countryCode": "JP",
+      "placeName": "Kyoto",
+      "placeLocalName": "京都",
+      "sourceUrl": "https://geocoding-api.open-meteo.com/v1/search?name=Kyoto&countryCode=JP&count=10&language=it&format=json",
+      "latitude": 35.02107,
+      "longitude": 135.75385,
+      "geocodingId": 1857910
+    },
+    "takao-kyoto": {
+      "countryCode": "JP",
+      "placeName": "Takao (Kyoto)",
+      "placeLocalName": "高雄",
+      "sourceUrl": "https://weathernews.jp/koyo/spot/26204/",
+      "latitude": 35.054823,
+      "longitude": 135.673874
+    },
+    "takayama": {
+      "countryCode": "JP",
+      "placeName": "Takayama",
+      "placeLocalName": "高山",
+      "sourceUrl": "https://geocoding-api.open-meteo.com/v1/search?name=Takayama&countryCode=JP&count=10&language=it&format=json",
+      "latitude": 36.13333,
+      "longitude": 137.25,
+      "geocodingId": 1850892
+    },
+    "hirayu-onsen": {
+      "countryCode": "JP",
+      "placeName": "Hirayu Onsen",
+      "placeLocalName": "平湯温泉",
+      "sourceUrl": "https://geocoding-api.open-meteo.com/v1/search?name=Hirayu&countryCode=JP&count=10&language=it&format=json",
+      "latitude": 36.19061,
+      "longitude": 137.55174,
+      "geocodingId": 1862454
+    },
+    "kanazawa": {
+      "countryCode": "JP",
+      "placeName": "Kanazawa",
+      "placeLocalName": "金沢",
+      "sourceUrl": "https://geocoding-api.open-meteo.com/v1/search?name=Kanazawa&countryCode=JP&count=10&language=it&format=json",
+      "latitude": 36.6,
+      "longitude": 136.61667,
+      "geocodingId": 1860243
+    },
+    "nikko": {
+      "countryCode": "JP",
+      "placeName": "Nikko",
+      "placeLocalName": "日光",
+      "sourceUrl": "https://geocoding-api.open-meteo.com/v1/search?name=Nikko&countryCode=JP&count=10&language=it&format=json",
+      "latitude": 36.75,
+      "longitude": 139.61667,
+      "geocodingId": 1855395
+    },
+    "tokyo": {
+      "countryCode": "JP",
+      "placeName": "Tokyo",
+      "placeLocalName": "東京",
+      "sourceUrl": "https://geocoding-api.open-meteo.com/v1/search?name=Tokyo&countryCode=JP&count=10&language=it&format=json",
+      "latitude": 35.6895,
+      "longitude": 139.69171,
+      "geocodingId": 1850147
+    }
+  }
+}

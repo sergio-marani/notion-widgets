@@ -5,7 +5,7 @@ import {createSnowExtension} from './sections/snow.js';
 const settings=readSettings();
 const query=new URLSearchParams(location.search);
 const sections=[];
-if(settings.city.length>=2 && settings.dates && !settings.error){
+if((settings.placeId || settings.city.length>=2) && settings.dates && !settings.error){
   if(query.get('foliage')==='true')sections.push(createFoliageExtension());
   if(query.get('snow')==='true')sections.push(createSnowExtension());
 }

@@ -1,86 +1,105 @@
 # Weather Widget
 
-One single-city weather card with optional historical temperatures, foliage and three-year snow history. Interface labels are in Italian. There is one entry page and no build step.
+One weather card for a selected location, with optional historical temperatures, foliage and three-year snow history. Interface labels are in Italian. No build step is required.
 
-## URL parameters
+## Location and URL parameters
 
-- `city` (required): city name, e.g. `Kyoto`, `Milano` or `Paris`.
-- `country` (optional): two-letter ISO country code; recommended to disambiguate names. Use `JP` for Japan.
-- `lat` and `lon` (optional, **both required together**): decimal coordinates for small places not found by the geocoder (latitude −90…90, longitude −180…180). When supplied, weather and snow use these coordinates directly and `city` becomes the display name; include `country=JP` to enable Japanese foliage matching. For example, `city=Hirayu%20Onsen&country=JP&lat=36.19061&lon=137.55175`.
-- `start` (optional): first travel date, `YYYY-MM-DD`.
-- `end` (optional): last travel date; defaults to `start`.
-- `date` (optional): shorthand for a single-day visit.
+- `place`: stable ID from `data/places/data.json`. Recommended for known locations; uses verified coordinates without geocoding. Takes precedence over `city`, `country`, `lat` and `lon`.
+- `city`: free-text city name for locations outside the catalog. Requires at least two characters. Used only when `place` is absent.
+- `country`: optional two-letter ISO country filter for `city` searches, e.g. `JP` or `IT`. Recommended to reduce ambiguous results; it does not identify a particular district.
+- `lat` and `lon`: optional decimal coordinates, both required together (latitude −90…90, longitude −180…180). Without `place`, weather, history and snow use these coordinates directly and `city` is the display name. For example: `city=Hirayu%20Onsen&country=JP&lat=36.19061&lon=137.55175&snow=true&date=2026-11-18`.
+- `start`: optional first travel date, `YYYY-MM-DD`.
+- `end`: optional last travel date; defaults to `start`.
+- `date`: optional shorthand for a single-day visit.
 - `from` / `to`: aliases for `start` / `end`.
-- `foliage` (optional): only the exact value `true` enables foliage. Omitted or any other value disables it and skips loading the dataset.
-- `snow` (optional): only the exact value `true` enables snow history. Requires valid travel dates. Otherwise no snow requests are made.
+- `foliage`: only the exact value `true` enables the foliage section. Requires valid travel dates.
+- `snow`: only the exact value `true` enables snow history. Requires valid travel dates.
 
-Example:
+Takao in Kyoto, with foliage:
 
-https://sergio-marani.github.io/notion-widgets/weather/?city=Kyoto&country=JP&start=2026-11-15&end=2026-11-19&foliage=true
+https://sergio-marani.github.io/notion-widgets/weather/?place=takao-kyoto&date=2026-11-18&foliage=true
 
-## Weather and history
+Takayama, with snowfall history:
 
-Current weather includes condition, temperature, feels-like temperature and humidity. It refreshes approximately every 30 minutes while the page is visible. With dates, history shows the mean daily high and mean daily low for the same calendar dates in the previous year. February 29 maps to February 28 when necessary. Historical values are context, not a travel forecast.
+https://sergio-marani.github.io/notion-widgets/weather/?place=takayama&start=2026-11-15&end=2026-11-19&snow=true
 
-Without dates, history is hidden. Invalid or reversed dates and intervals longer than 366 days show an error. Current weather, historical weather and section loading failures are handled independently. Foliage and snow loading do not block weather rendering.
+A location outside the catalog:
 
-At viewport widths of 340 px or less, the weather icon sits above the temperature to leave more room for text. Dividers and spacing are applied only between adjacent visible sections (weather, history, foliage, snow), never after the final section. Section renderers use a `widget-section` wrapper; one shared CSS rule manages separators.
+https://sergio-marani.github.io/notion-widgets/weather/?city=Milano&country=IT
 
-## Optional foliage
+Either `place` or `city` is required. Unknown IDs, unavailable catalogs or invalid catalog coordinates show an error; an explicit `place` never falls back to a similarly named city. With `city`, the geocoding provider chooses the location using the existing exact-name/first-result behavior, so use `place` when the intended district matters. `city=Takao` does not imply Takao in Kyoto, even with `country=JP`.
 
-Foliage requires `foliage=true`, valid travel dates, a geocoded city matching a dataset record (place name, local name or alias, plus country), and a visit overlapping a recorded tree interval. Overlap is inclusive: `visit.start <= tree.end` and `visit.end >= tree.start`.
+## Place catalog
 
-Entries in `trees` are evaluated independently, in dataset order. Names are taken directly from each entry; there is no hard-coded species list. A row is hidden outside its interval, for another year, or when its dates are missing or invalid. If no rows qualify, the whole section is hidden. Spring visits therefore do not show autumn foliage. With no travel dates, the JSON is not loaded. A dataset loading failure shows a foliage error for the resolved city while weather/history remain usable.
+Names, countries and coordinates are defined once in `data/places/data.json`. The catalog currently provides:
 
-Each gradient bar represents that tree's explicit start-to-end interval. The white marker is the midpoint of the whole visit, clamped to the bar. The date on the right is the estimated peak. Local place labels come from the dataset when foliage is enabled and dates are supplied.
+| ID | Place |
+| --- | --- |
+| `osaka` | Osaka |
+| `kyoto` | Kyoto |
+| `takao-kyoto` | Takao (Kyoto) |
+| `takayama` | Takayama |
+| `hirayu-onsen` | Hirayu Onsen |
+| `kanazawa` | Kanazawa |
+| `nikko` | Nikko |
+| `tokyo` | Tokyo |
 
-## Files
-
-Every widget must have `index.html` and `README.md`, use local `style.css` when styling is needed, and initialize in `scripts/widget.js`. Additional modules and data files are allowed.
-
-Keep shared logic in `scripts/`, optional sections in `scripts/sections/`, and each section's JSON data and schema in `data/<section>/`. Use `style.css` rather than `widget.css` or inline style blocks; dynamic per-element values such as the visit marker position may use inline style attributes.
-
-- `index.html`: the only entry page; loads `style.css` and `scripts/widget.js`.
-- `style.css`: all card styles, including foliage and compact layout.
-- `scripts/widget.js`: composes optional sections from URL parameters and mounts one card.
-- `scripts/weather-core.js`: date settings, geocoding, current/historical weather and card rendering.
-- `scripts/sections/foliage.js`: dataset loading, city matching, seasonal eligibility and rendering.
-- `scripts/sections/snow.js`: archive requests, complete-year validation, snow statistics and compact rendering.
-- `data/foliage/data.json`: seasonal data for supported places. See this file for the current city list.
-- `data/foliage/schema.json`: JSON Schema describing the dataset format.
-
-## Foliage JSON contract
-
-Example using migrated Kyoto values. This is not a newly verified forecast:
+Catalog format (`schemaVersion: 1`):
 
 ```json
 {
+  "$schema": "./schema.json",
   "schemaVersion": 1,
-  "updated": "2026-10-01",
-  "cities": {
-    "kyoto": {
+  "places": {
+    "takao-kyoto": {
       "countryCode": "JP",
-      "placeName": "Kyoto",
-      "placeLocalName": "京都",
-      "sourceUrl": "https://n-kishou.com/corp/news-contents/autumn/?lang=en",
-      "aliases": [
-        "Kyōto"
-      ],
-      "notes": "Optional source context, uncertainty or local coverage.",
+      "placeName": "Takao (Kyoto)",
+      "placeLocalName": "高雄",
+      "sourceUrl": "https://weathernews.jp/koyo/spot/26204/",
+      "latitude": 35.054823,
+      "longitude": 135.673874
+    }
+  }
+}
+```
+
+Coordinates are WGS84 decimal degrees. Every place requires a country, names, coordinate source URL, latitude and longitude. IDs are lowercase letters/numbers separated by hyphens; treat them as stable references. Takao's coordinates use the map linked from [Weathernews's Takao page](https://weathernews.jp/koyo/spot/26204/), not another city or Kyoto's city center. Other current entries use the specific Japanese result verified in Open-Meteo geocoding; their source URLs are recorded individually.
+
+Optional `geocodingId` stores the provider's numeric location ID. It lets a `city` search link to the same foliage record only when the provider ID and country both match. Matching by a broad name alone is deliberately avoided. Takao has no geocoding ID because the catalog uses its explicit local map coordinates.
+
+Weather, historical temperatures and snow history all use the selected location's coordinates. Catalog local names are displayed even without foliage or travel dates. The catalog is loaded independently from seasonal data, so a foliage loading error does not prevent weather for a catalog place.
+
+## Weather, history and layout
+
+Current weather includes condition, temperature, feels-like temperature and humidity. It refreshes approximately every 30 minutes while the page is visible. With dates, history shows the mean daily high and mean daily low for the same calendar dates in the previous year. February 29 maps to February 28 when necessary. These values provide historical context, not a trip forecast.
+
+Without dates, historical and optional seasonal sections are hidden. Invalid or reversed dates and intervals longer than 366 days show an error. Each section loads independently without blocking current weather rendering.
+
+At viewport widths of 340 px or less, the weather icon sits above the temperature. Dividers and spacing appear only between adjacent visible `widget-section` blocks, never after the final section.
+
+## Optional foliage
+
+Foliage requires `foliage=true`, valid dates, a catalog-linked location and overlap with a recorded tree season. A direct `place` selection uses its catalog ID. A `city` result can use foliage only when its provider ID and country match an entry with a `geocodingId`.
+
+Explicit `lat`/`lon` can also link to foliage when `country` matches and the coordinates match exactly one catalog location within 0.0001 degrees per axis (roughly 11 m latitude). A display name alone never links a distant or ambiguous coordinate point to foliage.
+
+`data/foliage/data.json` uses the same place IDs as the catalog. It contains sources, optional notes and tree intervals, without repeating names, countries or coordinates. Format (`schemaVersion: 2`):
+
+```json
+{
+  "$schema": "./schema.json",
+  "schemaVersion": 2,
+  "updated": "2026-10-01",
+  "places": {
+    "takao-kyoto": {
+      "sourceUrl": "https://weathernews.jp/koyo/spot/26204/",
       "trees": [
-        {
-          "name": "Ginkgo",
-          "color": "yellow",
-          "start": "2026-11-17",
-          "peak": "2026-11-27",
-          "end": "2026-12-07"
-        },
         {
           "name": "Maple",
           "color": "red",
-          "start": "2026-11-29",
-          "peak": "2026-12-11",
-          "end": "2026-12-19"
+          "start": "2026-11-08",
+          "peak": "2026-11-23",
+          "end": "2026-12-05"
         }
       ]
     }
@@ -88,48 +107,49 @@ Example using migrated Kyoto values. This is not a newly verified forecast:
 }
 ```
 
-- `schemaVersion`: fixed at `1`.
-- `updated`: actual dataset revision date.
-- `cities`: records keyed by stable city identifiers.
-- Required city fields, in order: `countryCode` (two-letter ISO country code), `placeName`, `placeLocalName`, `sourceUrl` (HTTPS reference for that place). There is no default source or fallback. Optional fields: `aliases` and `notes`. Notes are documentation and are not displayed.
-- The format supports any country; the current dataset contains only Japanese cities. `placeName` is the canonical matching name; `placeLocalName` is its local-language label. Matching also accepts aliases and always checks `countryCode`.
-- Each city has a non-empty `trees` array. Each entry has a display `name`, a `color` chosen from `yellow`, `orange`, `red`, and its own dates. Names may be Ginkgo, Maple, Larice, Faggio or any other tree; they are rendered exactly as supplied. Omit unsupported trees.
-- Colors select fixed gradients in CSS. `yellow` and `red` preserve the previous gradients; `orange` adds a third palette. Color does not depend on the tree name. Only listed, valid, in-season trees appear.
-- Tree date fields: `start`, `peak`, `end`, all real ISO dates with explicit year. Required ordering: `start <= peak <= end` and `start < end`.
-- `start`: estimated beginning of the visible foliage period; `peak`: estimated best viewing date; `end`: estimated end of the visible foliage period. These are eligibility boundaries as well as bar endpoints; avoid narrow peak-only windows unless intentional.
+The dates above are existing dataset estimates, not forecasts newly researched during the catalog migration. Existing sources, dates and tree lists have been preserved.
 
-The migrated dataset preserves the previous peak dates and end overrides. Initial start dates were derived from the old display offsets (ginkgo: peak minus 10 days; maple: peak minus 12 days). Default end dates were peak plus 10/8 days respectively. These intervals are provisional, not independently sourced season predictions. The JSON now stores every boundary explicitly so researched estimates can replace them without code changes.
+- `updated`: actual revision date of the seasonal estimates.
+- Each foliage entry needs its own HTTPS `sourceUrl` and a non-empty `trees` array. There is no default source. Optional `notes` describe source context and uncertainty; they are not displayed.
+- Tree `name` is a free display label. `color` selects one of three fixed CSS gradients: `yellow`, `orange`, `red`. Adding Larice, Faggio or other trees requires only JSON edits.
+- Tree dates must be real ISO dates including the year, ordered `start <= peak <= end` and `start < end`.
+- A tree is visible when `visit.start <= tree.end` and `visit.end >= tree.start`. Trees are evaluated independently, in JSON order. Unsupported years, out-of-season visits and invalid trees do not create empty rows. If no trees qualify, hide the whole foliage section.
+- The white marker shows the midpoint of the visit, clamped to the tree's start/end interval. The date on the right is the estimated peak.
 
-For an updated forecast, ask the research model to return JSON matching this schema for the cities in the dataset, with explicit year, per-tree name/color/start/peak/end, traceable source URLs, actual revision date, and uncertainty in `notes`. Ask it to distinguish sourced forecasts from inferred estimates and omit unsupported trees rather than invent dates. The widget does not automatically verify or refresh estimates.
+To add a location, first add its metadata and verified coordinates to the place catalog, then add seasonal estimates under the exact same ID in the foliage file. To revise forecasts, supply both schemas to the research model, request traceable sources and uncertainty notes, and distinguish sourced forecasts from inferred estimates. Omit unsupported trees instead of inventing dates. Data is not automatically refreshed.
 
 ## Optional snow history
 
-Example:
+Enable `snow=true` with valid dates; combine with `foliage=true` if desired. Snow works for catalog places, `city` searches outside the catalog and explicit `lat`/`lon`, and uses no static seasonal JSON.
 
-https://sergio-marani.github.io/notion-widgets/weather/?city=Takayama&country=JP&start=2026-01-10&end=2026-01-12&snow=true
+The section requests daily `snowfall_sum` in centimeters from the [Open-Meteo Archive API](https://open-meteo.com/en/docs/historical-weather-api) for the same interval one, two and three years before the trip. Cross-year visits retain both years; February 29 maps to February 28 when necessary.
 
-Add `foliage=true` to combine both sections. Snow supports any city resolved by geocoding, or specified with `lat`/`lon`, and does not depend on the foliage dataset.
+A year is usable only with a complete, consecutive daily series of finite non-negative values in cm. Missing days, failed requests and incompatible units exclude the whole year. Periods ending today (UTC) or later are also excluded. Other available years remain usable; no older replacement years are requested.
 
-The section requests daily `snowfall_sum` in centimeters from the [Open-Meteo Archive API](https://open-meteo.com/en/docs/historical-weather-api) for the same calendar interval one, two and three years before the requested trip. For example, January 10–12, 2026 compares January 10–12 in 2025, 2024 and 2023. Cross-year visits retain both years; February 29 maps to February 28 where necessary.
+- Snowy day: at least 0.1 cm of snowfall.
+- Snowy year: at least one snowy day in that comparison period.
+- Historical frequency: snowy years / complete available years, rounded to a whole percent. Two snowy years out of three gives 67%. With only one year, the value is 0% or 100%.
+- Mean cm: average total snowfall over the whole comparison period, including zero-snow years. It is not snow depth on the ground.
+- Three year tiles show total cm or `n/d`. No complete samples produces an unavailable message rather than 0%.
 
-Each sample must cover the entire shifted interval with consecutive dates, finite non-negative values and confirmed cm units. Missing days, nulls, failed requests and incompatible units exclude that whole year. Periods ending today (UTC) or later are also excluded. Other valid years remain usable. No older replacement years are requested.
+One to three years are a small descriptive sample, not a calibrated forecast probability. Archive reanalysis and grid-cell elevation may differ from local mountain conditions. The compact snowflake/percentage/year tiles distinguish snow from foliage gradients.
 
-- A **snowy day** has at least 0.1 cm of snowfall.
-- A **snowy year** has at least one snowy day in its comparison interval.
-- **Historical frequency** = snowy years / complete available years, rounded to the nearest percent. With 2 snowy years out of 3 this is 67%; with only 1 complete year the percentage can only be 0% or 100%.
-- **Mean cm** = mean total snowfall over the whole comparison interval across available years, including zero-snow years. It is not daily snowfall or snow depth on the ground.
-- The three year tiles show each interval's total cm, or `n/d` for unavailable samples. With no complete samples, show an unavailable message instead of 0%.
+## Files and preview
 
-The card labels this **frequency, not a forecast**. One to three years form a small descriptive sample, not a calibrated probability of future snowfall. Archive data is model-based reanalysis at the selected location; local elevation and mountain conditions can differ. No arbitrary cm progress scale is used: a snowflake, historical percentage and compact year tiles distinguish this section from foliage gradients.
+Every widget has `index.html` and `README.md`, uses local `style.css` rather than inline style blocks or `widget.css`, and initializes in `scripts/widget.js`. Dynamic values such as the visit marker position may use inline style attributes.
 
-## Preview
+- `scripts/weather-core.js`: settings, place catalog, geocoding, current/historical weather and card rendering.
+- `scripts/widget.js`: composes optional sections from URL flags.
+- `scripts/sections/foliage.js`: ID-based seasonal data lookup and tree bars.
+- `scripts/sections/snow.js`: snow archive requests, statistics and compact rendering.
+- `data/places/data.json`, `data/places/schema.json`: shared location metadata and contract.
+- `data/foliage/data.json`, `data/foliage/schema.json`: seasonal estimates and contract.
 
-From the repository root, run `python -m http.server 8000` and open `/weather/?city=Kyoto&country=JP&date=2026-11-20&foliage=true` on that server. Deploy the entire `weather/` directory.
+Serve the repository root with `python -m http.server 8000`, then open `/weather/?place=takao-kyoto&date=2026-11-18&foliage=true`. Deploy the entire `weather/` directory. Modules and JSON loading require HTTP rather than `file://`.
 
 ## Sources
 
 - [Open-Meteo Geocoding API](https://open-meteo.com/en/docs/geocoding-api)
 - [Open-Meteo Forecast API](https://open-meteo.com/en/docs)
 - [Open-Meteo Historical Weather API](https://open-meteo.com/en/docs/historical-weather-api)
-- [Japan Meteorological Corporation](https://n-kishou.com/corp/news-contents/autumn/?lang=en)
-- [Weathernews](https://weathernews.jp/koyo/)
+- Individual catalog/foliage source URLs, including [Weathernews](https://weathernews.jp/koyo/) and [Japan Meteorological Corporation](https://n-kishou.com/corp/news-contents/autumn/?lang=en).

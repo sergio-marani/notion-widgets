@@ -27,26 +27,30 @@ const description = code => code==null?'Dati non disponibili':code===0?'Sereno':
 const avg = xs => { const valid=xs.filter(Number.isFinite); return valid.length ? valid.reduce((a,b)=>a+b,0)/valid.length : null; };
 
 export function readSettings(query = new URLSearchParams(location.search)) {
+  const placeId=(query.get('place')||'').trim().toLowerCase();
   const city = (query.get('city') || '').trim().slice(0,120);
   const country = (query.get('country') || '').trim().toUpperCase();
-  const latParam=query.get('lat'), lonParam=query.get('lon');
-  const hasCoordinates=latParam!==null||lonParam!==null;
+  const latParam=query.get('lat'),lonParam=query.get('lon');
+  const hasCoordinates=!placeId && (latParam!==null || lonParam!==null);
   const latitude=latParam!==null && latParam.trim()!==''?Number(latParam):NaN;
   const longitude=lonParam!==null && lonParam.trim()!==''?Number(lonParam):NaN;
-  const coordinates=hasCoordinates && Number.isFinite(latitude) && latitude>=-90 && latitude<=90
-    && Number.isFinite(longitude) && longitude>=-180 && longitude<=180 ? {latitude,longitude}:null;
-  if(hasCoordinates && !coordinates)return {city,country,dates:null,coordinates:null,error:'Coordinate non valide. Specifica lat e lon numerici nell’URL.'};
+  const coordinates=hasCoordinates && Number.isFinite(latitude) && Math.abs(latitude)<=90
+    && Number.isFinite(longitude) && Math.abs(longitude)<=180?{latitude,longitude}:null;
+  if(hasCoordinates && !coordinates)return {placeId,city,country,dates:null,coordinates:null,error:'Coordinate non valide. Specifica lat e lon numerici nell’URL.'};
   const single = query.get('date');
   let start = query.get('start') || query.get('from') || single || '';
   let end = query.get('end') || query.get('to') || single || start;
   const hasDates = !!(start || end);
+  if(placeId && !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(placeId)){
+    return {placeId,city,country,dates:null,error:'Identificativo luogo non valido. Usa place=takao-kyoto.'};
+  }
   if (hasDates && (!validDate(start) || !validDate(end) || start > end)) {
-    return {city,country,dates:null,error:'Date non valide. Usa start=AAAA-MM-GG&end=AAAA-MM-GG.'};
+    return {placeId,city,country,dates:null,error:'Date non valide. Usa start=AAAA-MM-GG&end=AAAA-MM-GG.'};
   }
   if (hasDates && (toDay(end) - toDay(start)) / 86400000 > 366) {
-    return {city,country,dates:null,error:'L’intervallo non può superare un anno.'};
+    return {placeId,city,country,dates:null,error:'L’intervallo non può superare un anno.'};
   }
-  return {city,country,coordinates,dates:hasDates?{start,end,historicalStart:shiftYear(start,-1),historicalEnd:shiftYear(end,-1)}:null,error:null};
+  return {placeId,city,country,coordinates,dates:hasDates?{start,end,historicalStart:shiftYear(start,-1),historicalEnd:shiftYear(end,-1)}:null,error:null};
 }
 
 export async function requestJson(url, timeout=15000) {
@@ -73,6 +77,58 @@ export async function findCity(city,country='') {
   if (!matches.length) throw new Error('Città non trovata. Controlla il nome o il paese.');
   const exact=matches.find(item=>normalized(item.name)===normalized(city.split(',')[0]));
   return exact || matches[0];
+}
+
+let catalogPromise=null;
+export function loadPlaceCatalog(){
+  if(!catalogPromise){
+    catalogPromise=requestJson(new URL('../data/places/data.json',import.meta.url).toString())
+      .then(data=>{
+        if(data?.schemaVersion!==1 || !data.places || typeof data.places!=='object' || Array.isArray(data.places))throw new Error('Catalogo luoghi non valido.');
+        return data;
+      }).catch(error=>{catalogPromise=null;throw error});
+  }
+  return catalogPromise;
+}
+
+function validCatalogRecord(record){
+  return record && /^[A-Z]{2}$/.test(record.countryCode)
+    && typeof record.placeName==='string' && record.placeName.trim()
+    && typeof record.placeLocalName==='string'
+    && Number.isFinite(record.latitude) && Math.abs(record.latitude)<=90
+    && Number.isFinite(record.longitude) && Math.abs(record.longitude)<=180;
+}
+
+export async function findPlace(placeId){
+  let catalog;
+  try{catalog=await loadPlaceCatalog()}
+  catch{throw new Error('Impossibile caricare il catalogo luoghi.')}
+  const record=Object.hasOwn(catalog.places,placeId)?catalog.places[placeId]:null;
+  if(!record)throw new Error('Luogo non presente nel catalogo. Controlla il parametro place.');
+  if(!validCatalogRecord(record))throw new Error('Coordinate o dati del luogo non validi nel catalogo.');
+  return {placeId,id:record.geocodingId,name:record.placeName,placeLocalName:record.placeLocalName,
+    country_code:record.countryCode,latitude:record.latitude,longitude:record.longitude};
+}
+
+export function catalogIdForPlace(catalog,place){
+  if(!place)return null;
+  if(place.placeId){
+    const record=Object.hasOwn(catalog?.places||{},place.placeId)?catalog.places[place.placeId]:null;
+    return validCatalogRecord(record) && record.countryCode===place.country_code?place.placeId:null;
+  }
+  if(place.coordinatesProvided){
+    const matches=Object.keys(catalog?.places||{}).filter(id=>{
+      const record=catalog.places[id];
+      return validCatalogRecord(record) && record.countryCode===place.country_code
+        && Math.abs(record.latitude-place.latitude)<=0.0001 && Math.abs(record.longitude-place.longitude)<=0.0001;
+    });
+    return matches.length===1?matches[0]:null;
+  }
+  if(!Number.isInteger(place.id))return null;
+  return Object.keys(catalog?.places||{}).find(id=>{
+    const record=catalog.places[id];
+    return validCatalogRecord(record) && record.countryCode===place.country_code && record.geocodingId===place.id;
+  })||null;
 }
 
 async function currentWeather(place) {
@@ -123,21 +179,21 @@ export function cardHTML({place, city, dates, weather=null, history=null, histor
 export async function mountWeatherWidget({root=document.getElementById('cards'),renderExtra=()=>'',getPlaceLocalName=()=>'',extraReady=Promise.resolve(),loadExtra=async()=>{}}={}) {
   if(!root) throw new Error('Widget root not found');
   const settings=readSettings();
-  const {city,country,dates,error,coordinates}=settings;
-  if(!city || city.length<2 || error){
-    root.innerHTML=`<article class="city"><div class="head"><span class="place"><span class="name">Meteo</span></span></div><div class="status-unknown">${escapeHTML(error || 'Specifica una città nell’URL: ?city=Kyoto&start=2026-11-15&end=2026-11-19')}</div></article>`;
+  const {placeId,city,country,dates,error,coordinates}=settings;
+  const requestedName=placeId||city;
+  if((!placeId && city.length<2) || error){
+    root.innerHTML=`<article class="city"><div class="head"><span class="place"><span class="name">Meteo</span></span></div><div class="status-unknown">${escapeHTML(error || 'Specifica un luogo nell’URL: ?place=takao-kyoto oppure ?city=Kyoto&country=JP')}</div></article>`;
     return;
   }
   let place=null,weather=null,history=null,historyError=false,weatherError=false;
-  const update=()=>{root.innerHTML=cardHTML({place,city,dates,weather,history,historyError,weatherError,extra:renderExtra({place,dates,settings}),placeLocalName:getPlaceLocalName({place,dates,settings})})};
+  const update=()=>{root.innerHTML=cardHTML({place,city:requestedName,dates,weather,history,historyError,weatherError,extra:renderExtra({place,dates,settings}),placeLocalName:place?.placeLocalName||getPlaceLocalName({place,dates,settings})})};
   update();
   try {
-    place=coordinates
-      ? {name:city,latitude:coordinates.latitude,longitude:coordinates.longitude,
-          country_code:country,country:country==='JP'?'Giappone':country}
-      : await findCity(city,country);
+    place=placeId?await findPlace(placeId):coordinates
+      ?{name:city,...coordinates,coordinatesProvided:true,country_code:country,country:country==='JP'?'Giappone':country}
+      :await findCity(city,country);
   } catch(err) {
-    root.innerHTML=`<article class="city"><div class="head"><span class="place"><span class="name">${escapeHTML(city)}</span></span></div><div class="status-unknown">${escapeHTML(err.message)}</div></article>`;
+    root.innerHTML=`<article class="city"><div class="head"><span class="place"><span class="name">${escapeHTML(requestedName)}</span></span></div><div class="status-unknown">${escapeHTML(err.message)}</div></article>`;
     return;
   }
   update();
