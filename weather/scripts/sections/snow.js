@@ -109,11 +109,11 @@ export async function loadSnowForecast(place,dates){
 
 export function renderSnow(periods,{loading=false,forecastLoading=false,forecast={state:'unavailable'}}={}){
   const summary=summarizeSnow(periods);
-  const heading='<span class="snow-title"><span class="snow-icon" aria-hidden="true">❄</span> Neve</span>';
+  const heading='<span class="snow-title">Neve</span>';
   const predictedSnow=forecast.snowDays>0;
   const probability=forecastLoading?null:forecast.state==='complete'
     ?forecast.probability:predictedSnow?null:summary?.frequency;
-  const basis=forecastLoading?'In attesa della previsione':forecast.state==='complete'
+  const probabilityDescription=forecastLoading?'In attesa della previsione':forecast.state==='complete'
     ?'Previsione attuale':predictedSnow?'Probabilità non disponibile per tutto il periodo'
     :summary?'Stima storica, non previsione':'Probabilità non disponibile';
   let message='Il meteo per le tue date non è disponibile.';
@@ -134,7 +134,7 @@ export function renderSnow(periods,{loading=false,forecastLoading=false,forecast
   const percent=Number.isFinite(probability)?probability+'%':'—';
   const history=loading?'<div class="snow-note" role="status">Caricamento dello storico…</div>'
     :`<div class="snow-history-head"><span>Negli anni precedenti:</span>${summary?`<span>media ${formatCm(summary.meanCm)} cm</span>`:''}</div><div class="snow-years">${years}</div><div class="snow-note">${summary?`Neve in ${summary.snowyYears}/${summary.availableYears} anni · ≥0,1 cm/giorno`:'Storico neve non disponibile per queste date.'}</div>`;
-  return `<section class="widget-section snow-section" aria-label="Neve nelle date del viaggio"><div class="snow-head">${heading}<span class="snow-frequency" title="${escapeHTML(basis)}" aria-label="Probabilità neve: ${percent}. ${escapeHTML(basis)}"><small>probabilità </small>${percent}</span></div><div class="snow-forecast" role="status">${message}</div><div class="snow-basis">${basis}</div>${history}</section>`;
+  return `<section class="widget-section snow-section" aria-label="Neve nelle date del viaggio"><div class="snow-head">${heading}<span class="snow-frequency" title="${escapeHTML(probabilityDescription)}" aria-label="Probabilità neve: ${percent}. ${escapeHTML(probabilityDescription)}"><small>probabilità</small>${percent}</span></div><div class="snow-forecast${predictedSnow && !forecastLoading?' has-snow':''}" role="status">${message}</div>${history}</section>`;
 }
 
 export function createSnowExtension(){

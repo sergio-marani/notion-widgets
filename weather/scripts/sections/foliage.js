@@ -18,7 +18,7 @@ function foliageSection(content,source){
   try{
     if(new URL(source).protocol==='https:')link=`<a href="${escapeHTML(source)}" target="_blank" rel="noopener noreferrer">Fonte ↗</a>`;
   }catch{}
-  return `<section class="widget-section foliage-section" aria-label="Foliage"><div class="fol-head"><span class="fol-title"><span aria-hidden="true">🍁</span> Foliage</span>${link}</div>${content}</section>`;
+  return `<section class="widget-section foliage-section" aria-label="Foliage"><div class="fol-head"><span class="fol-title">Foliage</span>${link}</div>${content}</section>`;
 }
 
 const foliageMessage=(message,source)=>foliageSection(`<div class="section-note">${message}</div>`,source);
