@@ -51,8 +51,7 @@
           "peak": "2026-11-23",
           "end": "2026-12-05"
         }
-      ],
-      "notes": "Weathernews aggiornato indica inizio periodo migliore attorno al 20 novembre e inizio caduta attorno al 5 dicembre. Visita prevista 18 novembre: leggermente prima del periodo migliore. Picco 23/11 e finestra sono stime già presenti nel widget, non un nuovo picco ufficiale. https://weathernews.jp/koyo/spot/26204/"
+      ]
     },
     "takayama": {
       "sourceUrl": "https://weathernews.jp/koyo/spot/25235/",
@@ -71,8 +70,7 @@
           "peak": "2026-11-12",
           "end": "2026-11-21"
         }
-      ],
-      "notes": "Per gli aceri presso il santuario Hie, Weathernews (consultato 02/11/2026) indica periodo migliore circa dal 9 novembre e inizio caduta delle foglie circa dal 17 novembre. La data di picco 12/11 e le estremità 05/11–21/11 sono ricostruzioni orientative per il widget, NON date di picco/fine pubblicate da Weathernews. Il ginkgo conserva la stima precedente, senza nuovo dato distinto per specie. https://weathernews.jp/koyo/spot/25235/"
+      ]
     },
     "hirayu-onsen": {
       "sourceUrl": "https://weathernews.jp/koyo/spot/25210/",
@@ -84,8 +82,7 @@
           "peak": "2026-10-26",
           "end": "2026-11-06"
         }
-      ],
-      "notes": "Area più ampia di Okuhida Onsen: Weathernews segnala il 2 novembre foglie già in caduta (circa 50–60% residue) e al 30 ottobre i cinque comprensori nel periodo migliore. Per la visita del 20 novembre la stagione sarà verosimilmente avanzata o terminata. Date esistenti conservate come stime, non estrapolate a tutte le quote dell'area. https://weathernews.jp/koyo/spot/25210/"
+      ]
     },
     "kanazawa": {
       "sourceUrl": "https://n-kishou.com/corp/news-contents/autumn/?lang=en",
@@ -104,8 +101,7 @@
           "peak": "2026-11-30",
           "end": "2026-12-04"
         }
-      ],
-      "notes": "Ginkgo: JMC forecast del 01/10/2026 indica il 26 ottobre (non il 10 novembre, che è la media storica). Inizio/fine della barra stimati a ±10 giorni: JMC pubblica il giorno di colorazione, non una finestra completa. Acero: JMC indica il 30 novembre per Kanazawa; Weathernews prevede per Kenroku-en condizioni favorevoli dal 21 novembre e inizio caduta dal 4 dicembre. Inizio/fine della barra riflettono il parco, mentre il picco resta quello cittadino; non sono una singola previsione omogenea. Fonti: https://n-kishou.com/corp/news-contents/autumn/?lang=en ; https://weathernews.jp/koyo/spot/25605/"
+      ]
     },
     "nikko": {
       "sourceUrl": "https://weathernews.jp/koyo/spot/24107/",
@@ -117,8 +113,7 @@
           "peak": "2026-11-12",
           "end": "2026-11-23"
         }
-      ],
-      "notes": "Weathernews per l'area dei santuari/templi di Nikko prevede il periodo migliore circa dal 5 novembre e l'inizio caduta foglie dal 18 novembre. Picco 12/11 e fine visibile 23/11 restano stime precedenti (non specificate come date puntuali dal bollettino), con possibile foliage molto ridotto alla visita del 27/11. Fonte: https://weathernews.jp/koyo/spot/24107/"
+      ]
     },
     "tokyo": {
       "sourceUrl": "https://n-kishou.com/corp/news-contents/autumn/?lang=en",

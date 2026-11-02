@@ -71,6 +71,10 @@ Weather, historical temperatures and snow history all use the selected location'
 
 ## Weather, history and layout
 
+Open-Meteo requests run one at a time. Web Locks coordinate embeds and tabs sharing the same browser storage partition and origin; without Web Locks, serialization is limited to each widget. Successful responses are cached in localStorage (archive: seven days; forecast/geocoding: five minutes). Blocked or full storage does not prevent requests. HTTP 429 responses get up to three retries with exponential backoff and jitter, respecting `Retry-After`; cooldowns longer than 60 seconds surface the error without an early retry. Static local JSON remains uncached. Browser or network-wide traffic outside these widgets can still cause rate limits.
+
+Request coordination checks: `node --test weather/tests/weather-request.test.mjs` from the repository root.
+
 Current weather includes condition, temperature, feels-like temperature and humidity. It refreshes approximately every 30 minutes while the page is visible. With dates, history shows the mean daily high and mean daily low for the same calendar dates in the previous year. February 29 maps to February 28 when necessary. These values provide historical context, not a trip forecast.
 
 Without dates, historical and optional seasonal sections are hidden. Invalid or reversed dates and intervals longer than 366 days show an error. Each section loads independently without blocking current weather rendering.

@@ -1,4 +1,6 @@
 'use strict';
+import {requestJson} from './weather-request.js';
+export {requestJson};
 
 /**
  * Shared weather logic for the reusable weather widget and optional extensions.
@@ -51,16 +53,6 @@ export function readSettings(query = new URLSearchParams(location.search)) {
     return {placeId,city,country,dates:null,error:'L’intervallo non può superare un anno.'};
   }
   return {placeId,city,country,coordinates,dates:hasDates?{start,end,historicalStart:shiftYear(start,-1),historicalEnd:shiftYear(end,-1)}:null,error:null};
-}
-
-export async function requestJson(url, timeout=15000) {
-  const ctrl=new AbortController();
-  const timeoutId=setTimeout(()=>ctrl.abort(),timeout);
-  try {
-    const res=await fetch(url,{signal:ctrl.signal,cache:'no-store'});
-    if (!res.ok) throw new Error('HTTP '+res.status);
-    return await res.json();
-  } finally {clearTimeout(timeoutId)}
 }
 
 const endpoint = (base,params) => {
